@@ -272,11 +272,12 @@ async function initializeDriver() {
     console.log('initializing driver')
     try {
         const options = new Chrome.Options();
-        options.addArguments('--headless=new')
+        options.addArguments('--headless');
+        options.addArguments('--no-sandbox');
 
         driver = new Builder()
             .forBrowser('chrome')
-            // .setChromeOptions(options)
+            .setChromeOptions(options)
             .build();
         // await driver.get('C:\\Users\\Dhanushka\\Documents\\projects\\svr\\widget.html');
         await driver.get('/home/dhanu_trade23/signal/widget.html');
