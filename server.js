@@ -4,7 +4,8 @@ const WebSocket = require('ws');
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({server});
-const {Builder, By, Key, until, WebElement} = require('selenium-webdriver');
+const {Builder, By, Key, until, WebElement,logging} = require('selenium-webdriver');
+const chrome = require('selenium-webdriver/chrome');
 let signals = [];
 let driver;
 app.use(express.json());
@@ -270,7 +271,15 @@ async function setInitialData() {
 async function initializeDriver() {
     console.log('initializing driver')
     try {
-        driver = await new Builder().forBrowser('chrome').build();
+        const prefs = new logging.Preferences();
+        prefs.setLevel(logging.Type.DRIVER, logging.Level.ALL);
+
+        const chromeOptions = new chrome.Options();
+        chromeOptions.addArguments('--headless');
+        driver = new Builder()
+            .forBrowser('chrome')
+            .setChromeOptions(chromeOptions)
+            .build();
         // await driver.get('C:\\Users\\Dhanushka\\Documents\\projects\\svr\\widget.html');
         await driver.get('/home/dhanu_trade23/signal/widget.html');
     } catch (error) {
