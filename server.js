@@ -280,7 +280,7 @@ async function initializeDriver() {
         const chromeDriverPath = '/home/dhanu_trade23/.cache/selenium/chromedriver/linux64/119.0.6045.105/chromedriver';
         driver = new webdriver.Builder()
             .forBrowser('chrome')
-            // .setChromeOptions(chromeOptions)
+            .setChromeOptions(chromeOptions)
             .build();
         // driver = new Builder()
         //     .forBrowser('chrome')
