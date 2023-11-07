@@ -283,7 +283,7 @@ async function initializeDriver() {
             .setChromeOptions(chromeOptions)
             .build();
         // await driver.get('C:\\Users\\Dhanushka\\Documents\\projects\\svr\\widget.html');
-        await driver.get('/home/dhanu_trade23/signal/widget.html');
+        await driver.get('file:///home/dhanu_trade23/signal/widget.html');
     } catch (error) {
         console.error('Error:', error);
     }
