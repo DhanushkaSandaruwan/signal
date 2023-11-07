@@ -276,9 +276,13 @@ async function initializeDriver() {
 
         const chromeOptions = new chrome.Options();
         chromeOptions.addArguments('--headless');
-        driver = new Builder()
+        // Optionally, you can specify the path to the Chrome binary:
+        // chromeOptions.setChromeBinaryPath('/path/to/chrome');
+
+        const driver = new Builder()
             .forBrowser('chrome')
             .setChromeOptions(chromeOptions)
+            .setLoggingPrefs(prefs)
             .build();
         // await driver.get('C:\\Users\\Dhanushka\\Documents\\projects\\svr\\widget.html');
         await driver.get('/home/dhanu_trade23/signal/widget.html');
