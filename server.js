@@ -1,4 +1,3 @@
-import Chrome from "selenium-webdriver/chrome";
 
 const express = require('express');
 const http = require('http');
@@ -7,7 +6,7 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({server});
 const {Builder, By, Key, until, WebElement,logging} = require('selenium-webdriver');
-const chrome = require('selenium-webdriver/chrome');
+const Chrome = require('selenium-webdriver/chrome');
 let signals = [];
 let driver;
 app.use(express.json());
