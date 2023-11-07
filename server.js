@@ -277,7 +277,7 @@ async function initializeDriver() {
         const chromeDriverPath = '/home/dhanu_trade23/.cache/selenium/chromedriver/linux64/119.0.6045.105/chromedriver';
         driver = new Builder()
             .forBrowser('chrome')
-            .setChromeOptions(chromeOptions)
+            // .setChromeOptions(chromeOptions)
             .setChromeService(new chrome.ServiceBuilder(chromeDriverPath))
             .build();
         // await driver.get('C:\\Users\\Dhanushka\\Documents\\projects\\svr\\widget.html');
