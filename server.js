@@ -5,7 +5,7 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({server});
 const {Builder, By, Key, until, WebElement, logging} = require('selenium-webdriver');
-const Chrome = require('selenium-webdriver/chrome');
+const chrome = require('selenium-webdriver/chrome');
 let signals = [];
 let driver;
 app.use(express.json());
@@ -271,13 +271,14 @@ async function setInitialData() {
 async function initializeDriver() {
     console.log('initializing driver')
     try {
-        const options = new Chrome.Options();
-        options.addArguments('--headless');
-        options.addArguments('--no-sandbox');
-
+        const chromeOptions = new chrome.Options();
+        chromeOptions.addArguments('--headless');
+        chromeOptions.addArguments('--no-sandbox');
+        const chromeDriverPath = '/home/dhanu_trade23/.cache/selenium/chromedriver/linux64/119.0.6045.105/chromedriver';
         driver = new Builder()
             .forBrowser('chrome')
-            .setChromeOptions(options)
+            .setChromeOptions(chromeOptions)
+            .setChromeService(new chrome.ServiceBuilder(chromeDriverPath))
             .build();
         // await driver.get('C:\\Users\\Dhanushka\\Documents\\projects\\svr\\widget.html');
         await driver.get('/home/dhanu_trade23/signal/widget.html');
