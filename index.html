@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hello Bulma!</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+<div style="padding-top: 30px;text-align: right;padding-right: 30px">
+    <button class="button is-primary" id="connectButton">Connect</button>
+</div>
+<section class="section">
+    <div class="container">
+        <h1 class="title">
+            Hello Dhanushka!
+        </h1>
+        <p class="subtitle">
+            Technical Summery For <strong>Options</strong> Trading!
+        </p>
+    </div>
+</section>
+<div class="notification is-primary" style="margin-top:20vh;width: 75vw;margin-left: 15vw;text-align: center" id="note">
+    Please wait as we analyze the market. We'll notify you when we find a promising trading opportunity.
+    <progress class="progress is-small is-primary" max="100" style=""
+              id="progressElement">
+    </progress>
+</div>
+<div class="columns is-multiline" style="padding: 10px;text-align: center" id="alerts">
+
+</div>
+<script>
+    const audio = new Audio('alert.mp3');
+    const alerts = document.getElementById("alerts");
+    const connectButton = document.getElementById("connectButton");
+    const progressElement = document.getElementById("progressElement");
+    const noteElement = document.getElementById("note");
+
+    let socket;
+    connectButton.addEventListener("click", () => {
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.close();
+            connectButton.textContent = "Connect to WebSocket";
+        } else {
+            socket = new WebSocket("ws://34.125.18.42/:3000"); // Replace with your server URL
+            connectButton.textContent = "Disconnect";
+            socket.addEventListener("open", (event) => {
+                console.log("Connected to WebSocket");
+            });
+
+            socket.addEventListener("message", (event) => {
+                const list = JSON.parse(event.data);
+                let added = 0;
+                alerts.innerHTML = '';
+                for (let i = 0; i < list.length; i++) {
+                    if (list[i].primary_direction.includes('Strong') && list[i].secondary_direction.includes('Strong')) {
+                        alerts.insertAdjacentHTML('beforeend', generateSignalContent(list[i]));
+                        added++;
+                    }
+                }
+                if (added > 0) {
+                    playAlertSound();
+                    progressElement.style.display = "none";
+                    noteElement.style.display = "none";
+                } else {
+                    progressElement.style.display = "block";
+                    noteElement.style.display = "block";
+                }
+            });
+
+            socket.addEventListener("close", (event) => {
+                console.log("WebSocket connection closed");
+                connectButton.textContent = "Connect to WebSocket";
+                alerts.innerHTML = '';
+            });
+        }
+    });
+
+    function playAlertSound() {
+        audio.play();
+    }
+
+    function generateSignalContent(data) {
+        const primaryDirectionClass = data.primary_direction.includes("Buy") ? "is-primary" : "is-danger";
+        return `
+        <div class="column is-half">
+            <article class="panel ${primaryDirectionClass}">
+                <p class="panel-heading">
+                    ${data.name}
+                </p>
+                <div class="columns">
+                    <div class="column" style="text-align: center;justify-content: center;padding-top: 20px">
+                        <p class="title is-4">Primary Confirmation</p>
+                        <dl>
+                            <dt>Sell indicators</dt>
+                            <dd><span class="tag is-danger">${data.primary_sell}</span></dd>
+                            <dt>Neutral indicators</dt>
+                            <dd><span class="tag is-light">${data.primary_neutral}</span></dd>
+                            <dt>Buy indicators</dt>
+                            <dd><span class="tag is-primary">${data.primary_buy}</span></dd>
+                        </dl>
+                        <strong>Recommendation:</strong>
+                        <span class="tag ${primaryDirectionClass}">${data.primary_direction}</span>
+                    </div>
+                    <div class="column" style="text-align: center;justify-content: center;padding-top: 20px">
+                        <p class="title is-4">Secondary Confirmation</p>
+                        <dl>
+                            <dt>Sell indicators</dt>
+                            <dd><span class="tag is-danger">${data.secondary_sell}</span></dd>
+                            <dt>Neutral indicators</dt>
+                            <dd><span class="tag is-light">${data.secondary_neutral}</span></dd>
+                            <dt>Buy indicators</dt>
+                            <dd><span class="tag is-primary">${data.secondary_buy}</span></dd>
+                        </dl>
+                        <strong>Recommendation:</strong>
+                        <span class="tag ${primaryDirectionClass}">${data.secondary_direction}</span>
+                    </div>
+                </div>
+            </article>
+        </div>`;
+    }
+
+</script>
+</body>
+</html>
