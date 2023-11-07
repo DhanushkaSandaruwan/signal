@@ -1,11 +1,10 @@
-
 const express = require('express');
 const http = require('http');
 const WebSocket = require('ws');
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({server});
-const {Builder, By, Key, until, WebElement,logging} = require('selenium-webdriver');
+const {Builder, By, Key, until, WebElement, logging} = require('selenium-webdriver');
 const Chrome = require('selenium-webdriver/chrome');
 let signals = [];
 let driver;
@@ -275,9 +274,9 @@ async function initializeDriver() {
         const options = new Chrome.Options();
         options.addArguments('--headless=new')
 
-        const driver = new Builder()
+        driver = new Builder()
             .forBrowser('chrome')
-            .setChromeOptions(options)
+            // .setChromeOptions(options)
             .build();
         // await driver.get('C:\\Users\\Dhanushka\\Documents\\projects\\svr\\widget.html');
         await driver.get('/home/dhanu_trade23/signal/widget.html');
