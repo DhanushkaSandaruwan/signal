@@ -320,7 +320,7 @@ async function collectData() {
                 } else if (direction.includes('container-sell')) {
                     direction = 'Sell';
                 }
-                console.log(name)
+
                 for (let i = 0; i < signals.length; i++) {
                     if (signals[i].name === name) {
                         signals[i].primary_direction = direction;
