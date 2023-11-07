@@ -1,3 +1,5 @@
+import Chrome from "selenium-webdriver/chrome";
+
 const express = require('express');
 const http = require('http');
 const WebSocket = require('ws');
@@ -271,18 +273,12 @@ async function setInitialData() {
 async function initializeDriver() {
     console.log('initializing driver')
     try {
-        const prefs = new logging.Preferences();
-        prefs.setLevel(logging.Type.DRIVER, logging.Level.ALL);
-
-        const chromeOptions = new chrome.Options();
-        chromeOptions.addArguments('--headless');
-        // Optionally, you can specify the path to the Chrome binary:
-        // chromeOptions.setChromeBinaryPath('/path/to/chrome');
+        const options = new Chrome.Options();
+        options.addArguments('--headless=new')
 
         const driver = new Builder()
             .forBrowser('chrome')
-            .setChromeOptions(chromeOptions)
-            .setLoggingPrefs(prefs)
+            .setChromeOptions(options)
             .build();
         // await driver.get('C:\\Users\\Dhanushka\\Documents\\projects\\svr\\widget.html');
         await driver.get('/home/dhanu_trade23/signal/widget.html');
