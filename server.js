@@ -273,8 +273,14 @@ async function setInitialData() {
 async function initializeDriver() {
     console.log('initializing driver')
     try {
+        const chromeOptions = new chrome.Options();
+        chromeOptions.addArguments("--headless");
+        chromeOptions.addArguments("--no-sandbox");
+        chromeOptions.addArguments("--remote-debugging-port=9222"); // Add this line
+
         driver = new Builder()
             .forBrowser('chrome')
+            .setChromeOptions(chromeOptions)
             .build();
         // await driver.get('C:\\Users\\Dhanushka\\Documents\\projects\\svr\\widget.html');
         await driver.get('https://google.com');
