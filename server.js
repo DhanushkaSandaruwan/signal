@@ -273,22 +273,11 @@ async function setInitialData() {
 async function initializeDriver() {
     console.log('initializing driver')
     try {
-        const chromeOptions = new chromeDriver.Options();
-        chromeOptions.addArguments('--headless');
-        chromeOptions.addArguments('--no-sandbox');
-        chromeOptions.addArguments('headless', 'disable-gpu');
-        const chromeDriverPath = '/home/dhanu_trade23/.cache/selenium/chromedriver/linux64/119.0.6045.105/chromedriver';
-        driver = new webdriver.Builder()
+        driver = new Builder()
             .forBrowser('chrome')
-            .setChromeOptions(chromeOptions)
             .build();
-        // driver = new Builder()
-        //     .forBrowser('chrome')
-        //     // .setChromeOptions(chromeOptions)
-        //     .setChromeService(new chrome.ServiceBuilder(chromeDriverPath))
-        //     .build();
         // await driver.get('C:\\Users\\Dhanushka\\Documents\\projects\\svr\\widget.html');
-        await driver.get('/home/dhanu_trade23/signal/widget.html');
+        await driver.get('widget.html');
     } catch (error) {
         console.error('Error:', error);
     }
@@ -325,7 +314,7 @@ async function collectData() {
                 } else if (direction.includes('container-sell')) {
                     direction = 'Sell';
                 }
-
+                console.log(name)
                 for (let i = 0; i < signals.length; i++) {
                     if (signals[i].name === name) {
                         signals[i].primary_direction = direction;
