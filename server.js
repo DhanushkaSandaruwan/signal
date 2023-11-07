@@ -376,6 +376,7 @@ async function collectData() {
                 neutral = '';
                 buy = '';
             } catch (e) {
+                console.log(e)
                 console.error('data collection error!')
             }
         }
