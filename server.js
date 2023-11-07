@@ -277,7 +277,7 @@ async function initializeDriver() {
             .forBrowser('chrome')
             .build();
         // await driver.get('C:\\Users\\Dhanushka\\Documents\\projects\\svr\\widget.html');
-        await driver.get('widget.html');
+        await driver.get('https://google.com');
     } catch (error) {
         console.error('Error:', error);
     }
