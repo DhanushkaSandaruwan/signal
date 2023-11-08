@@ -290,15 +290,16 @@ async function initializeDriver() {
 }
 
 async function collectData() {
+    let name;
+    let direction;
+    let sell;
+    let neutral;
+    let buy;
+    let frames;
     while (true) {
-        let name;
-        let direction;
-        let sell;
-        let neutral;
-        let buy;
-        await sleep(30000);
+        await sleep(10000);
         await setInitialData();
-        let frames = await driver.findElement(By.tagName("body")).findElements(By.tagName("iframe"));
+        frames = await driver.findElement(By.tagName("body")).findElements(By.tagName("iframe"));
         for (const frame of frames) {
             try {
                 await driver.switchTo().frame(frame);
@@ -337,7 +338,7 @@ async function collectData() {
                     sell = '';
                     neutral = '';
                     buy = '';
-                    await sleep(5000);
+                    await sleep(3000);
 
                     name = await driver.findElement(By.xpath("//*[@id=\"widget-technical-analysis-container\"]/div/div/div/div/span")).getAttribute('innerText');
                     direction = await driver.findElement(By.xpath("//*[@id=\"widget-technical-analysis-container\"]/div/div/div/div/div[2]/div[1]/div[3]")).getAttribute('class');
@@ -367,18 +368,18 @@ async function collectData() {
                             break;
                         }
                     }
-                    notify();
                 }
                 await driver.switchTo().defaultContent();
                 name = '';
                 direction = '';
-                sell = '';
-                neutral = '';
-                buy = '';
+                sell = '0';
+                neutral = '0';
+                buy = '0';
             } catch (e) {
                 console.log(e)
                 console.error('data collection error!')
             }
+            notify();
         }
         await driver.navigate().refresh();
     }
