@@ -338,7 +338,7 @@ async function collectData() {
                     sell = '';
                     neutral = '';
                     buy = '';
-                    await sleep(3000);
+                    await sleep(5000);
 
                     name = await driver.findElement(By.xpath("//*[@id=\"widget-technical-analysis-container\"]/div/div/div/div/span")).getAttribute('innerText');
                     direction = await driver.findElement(By.xpath("//*[@id=\"widget-technical-analysis-container\"]/div/div/div/div/div[2]/div[1]/div[3]")).getAttribute('class');
