@@ -297,49 +297,13 @@ async function collectData() {
     let buy;
     let frames;
     while (true) {
-        await sleep(10000);
-        await setInitialData();
-        frames = await driver.findElement(By.tagName("body")).findElements(By.tagName("iframe"));
-        for (const frame of frames) {
-            try {
-                await driver.switchTo().frame(frame);
-                name = await driver.findElement(By.xpath("//*[@id=\"widget-technical-analysis-container\"]/div/div/div/div/span")).getAttribute('innerText');
-                direction = await driver.findElement(By.xpath("//*[@id=\"widget-technical-analysis-container\"]/div/div/div/div/div[2]/div[1]/div[3]")).getAttribute('class');
-                sell = await driver.findElement(By.xpath("//*[@id=\"widget-technical-analysis-container\"]/div/div/div/div/div[2]/div[2]/div[1]/span[2]")).getAttribute('innerText');
-                neutral = await driver.findElement(By.xpath("//*[@id=\"widget-technical-analysis-container\"]/div/div/div/div/div[2]/div[2]/div[2]/span[2]")).getAttribute('innerText');
-                buy = await driver.findElement(By.xpath("//*[@id=\"widget-technical-analysis-container\"]/div/div/div/div/div[2]/div[2]/div[3]/span[2]")).getAttribute('innerText');
-
-                name = name.replace('Technical Analysis for ', '');
-                if (direction.includes('container-neutral')) {
-                    direction = 'Neutral';
-                } else if (direction.includes('container-strong-buy')) {
-                    direction = 'Strong Buy';
-                } else if (direction.includes('container-strong-sell')) {
-                    direction = 'Strong Sell';
-                } else if (direction.includes('container-buy')) {
-                    direction = 'Buy';
-                } else if (direction.includes('container-sell')) {
-                    direction = 'Sell';
-                }
-
-                for (let i = 0; i < signals.length; i++) {
-                    if (signals[i].name === name) {
-                        signals[i].primary_direction = direction;
-                        signals[i].primary_sell = sell;
-                        signals[i].primary_neutral = neutral;
-                        signals[i].primary_buy = buy;
-                        break;
-                    }
-                }
-                if (direction.includes('Strong') && (parseInt(sell) > 16 || parseInt(buy) > 16)) {
-                    await driver.findElement(By.xpath('//*[@id="5m"]')).click();
-                    name = '';
-                    direction = '';
-                    sell = '';
-                    neutral = '';
-                    buy = '';
-                    await sleep(5000);
-
+        try {
+            await sleep(10000);
+            await setInitialData();
+            frames = await driver.findElement(By.tagName("body")).findElements(By.tagName("iframe"));
+            for (const frame of frames) {
+                try {
+                    await driver.switchTo().frame(frame);
                     name = await driver.findElement(By.xpath("//*[@id=\"widget-technical-analysis-container\"]/div/div/div/div/span")).getAttribute('innerText');
                     direction = await driver.findElement(By.xpath("//*[@id=\"widget-technical-analysis-container\"]/div/div/div/div/div[2]/div[1]/div[3]")).getAttribute('class');
                     sell = await driver.findElement(By.xpath("//*[@id=\"widget-technical-analysis-container\"]/div/div/div/div/div[2]/div[2]/div[1]/span[2]")).getAttribute('innerText');
@@ -361,27 +325,69 @@ async function collectData() {
 
                     for (let i = 0; i < signals.length; i++) {
                         if (signals[i].name === name) {
-                            signals[i].secondary_direction = direction;
-                            signals[i].secondary_sell = sell;
-                            signals[i].secondary_neutral = neutral;
-                            signals[i].secondary_buy = buy;
+                            signals[i].primary_direction = direction;
+                            signals[i].primary_sell = sell;
+                            signals[i].primary_neutral = neutral;
+                            signals[i].primary_buy = buy;
                             break;
                         }
                     }
+                    if (direction.includes('Strong') && (parseInt(sell) > 16 || parseInt(buy) > 16)) {
+                        await driver.findElement(By.xpath('//*[@id="5m"]')).click();
+                        name = '';
+                        direction = '';
+                        sell = '';
+                        neutral = '';
+                        buy = '';
+                        await sleep(5000);
+
+                        name = await driver.findElement(By.xpath("//*[@id=\"widget-technical-analysis-container\"]/div/div/div/div/span")).getAttribute('innerText');
+                        direction = await driver.findElement(By.xpath("//*[@id=\"widget-technical-analysis-container\"]/div/div/div/div/div[2]/div[1]/div[3]")).getAttribute('class');
+                        sell = await driver.findElement(By.xpath("//*[@id=\"widget-technical-analysis-container\"]/div/div/div/div/div[2]/div[2]/div[1]/span[2]")).getAttribute('innerText');
+                        neutral = await driver.findElement(By.xpath("//*[@id=\"widget-technical-analysis-container\"]/div/div/div/div/div[2]/div[2]/div[2]/span[2]")).getAttribute('innerText');
+                        buy = await driver.findElement(By.xpath("//*[@id=\"widget-technical-analysis-container\"]/div/div/div/div/div[2]/div[2]/div[3]/span[2]")).getAttribute('innerText');
+
+                        name = name.replace('Technical Analysis for ', '');
+                        if (direction.includes('container-neutral')) {
+                            direction = 'Neutral';
+                        } else if (direction.includes('container-strong-buy')) {
+                            direction = 'Strong Buy';
+                        } else if (direction.includes('container-strong-sell')) {
+                            direction = 'Strong Sell';
+                        } else if (direction.includes('container-buy')) {
+                            direction = 'Buy';
+                        } else if (direction.includes('container-sell')) {
+                            direction = 'Sell';
+                        }
+
+                        for (let i = 0; i < signals.length; i++) {
+                            if (signals[i].name === name) {
+                                signals[i].secondary_direction = direction;
+                                signals[i].secondary_sell = sell;
+                                signals[i].secondary_neutral = neutral;
+                                signals[i].secondary_buy = buy;
+                                break;
+                            }
+                        }
+                    }
+                    await driver.switchTo().defaultContent();
+                    name = '';
+                    direction = '';
+                    sell = '0';
+                    neutral = '0';
+                    buy = '0';
+                } catch (e) {
+                    console.log(e)
+                    console.error('data collection error!')
                 }
-                await driver.switchTo().defaultContent();
-                name = '';
-                direction = '';
-                sell = '0';
-                neutral = '0';
-                buy = '0';
-            } catch (e) {
-                console.log(e)
-                console.error('data collection error!')
+                notify();
             }
-            notify();
+            await driver.navigate().refresh();
+        } catch (e) {
+            await driver.quit();
+            await initializeDriver();
+            console.log('driver restarted')
         }
-        await driver.navigate().refresh();
     }
 }
 
