@@ -298,7 +298,7 @@ async function collectData() {
     let frames;
     while (true) {
         try {
-            await sleep(10000);
+            await sleep(30000);
             await setInitialData();
             frames = await driver.findElement(By.tagName("body")).findElements(By.tagName("iframe"));
             for (const frame of frames) {
