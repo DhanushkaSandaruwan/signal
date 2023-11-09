@@ -379,6 +379,12 @@ async function collectData() {
                 } catch (e) {
                     console.log(e)
                     console.error('data collection error!')
+
+                    wss.clients.forEach((client) => {
+                        if (client.readyState === WebSocket.OPEN) {
+                            client.send(JSON.stringify({error: e}));
+                        }
+                    });
                 }
                 notify();
             }
@@ -387,6 +393,11 @@ async function collectData() {
             await driver.quit();
             await initializeDriver();
             console.log('driver restarted')
+            wss.clients.forEach((client) => {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify({error: 'driver restarted'}));
+                }
+            });
         }
     }
 }
